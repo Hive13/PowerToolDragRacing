@@ -17,7 +17,7 @@ WaveHC wave;      // This is the only wave (audio) object, since we will only pl
 #define DEBOUNCE 100  // button debouncer
 
 // system states
-#define DEMO        0  // cycle through the lights
+#define RESET       0  // re-initialize state machine
 #define STAGING     1  // light top bar, blink second bar, others off
 // turn on red, green, yellows for breaking beam of finish, trap, start, prestage
 #define LANE1STAGED 2  // lane 1 staged for 3 seconds, stop it's blinking
@@ -63,11 +63,10 @@ const int lane2StartGreenLight    = 33;  // Arduino digital output on pin 33 = L
 const int lane2FalseStartRedLight = 35;  // Arduino digital output on pin 35 = Lane 2 false-start red light
 const int lane2WINdicator         = 37;  // Arduino digital output on pin 37 = Lane 2 WINdicatiion
 
-//const int startButton = 8;             // Arduino digital input on pin 8 = Race Controller's start countdown button
-const int startButton = 45;              // Arduino digital input on pin 43 = Race Controller's start countdown button
+const int startButton = 45;              // Arduino digital input on pin 45 = Race Controller's start countdown button
 
 
-int state = DEMO;        // master variable for the state machine
+int state = RESET;        // master variable for the state machine
 boolean lane1StageState = LOW;
 boolean lane2StageState = LOW;
 boolean blinkState = LOW;
@@ -88,8 +87,6 @@ boolean count2State = LOW;
 boolean count1State = LOW;
 
 unsigned long lastTime = 0;
-unsigned long prevTime = 0;
-unsigned long lastReportTime = 0;
 unsigned long currentMillis = 0;
 unsigned long raceStartTime = 0;
 unsigned long lane1StartTime = 0;
@@ -130,8 +127,6 @@ boolean valLane2Cleared = LOW;
 boolean valPressedStartButton;
 
 boolean valStartInitiated = LOW;
-
-boolean readyToPlayFanfare = LOW;
 
 long stageTime1 = 0;
 long stageTime2 = 0;
@@ -202,7 +197,6 @@ void playfile(char *name) {
 // the setup routine runs once when you press reset:
 void setup() {
 	currentMillis = millis();
-	lastReportTime = currentMillis;
 	valStartInitiated = LOW;
 	// initialize the digital pins as outputs.
 	pinMode(lane1PreStageLight, OUTPUT);
@@ -475,7 +469,6 @@ void BothStaged() {
 	{
 		if (sdCardWorking) {
 			playcomplete("PTDR.WAV");
-			readyToPlayFanfare = LOW;
 		}
 		state = RUNNING;
 		currentMillis = millis();
@@ -776,7 +769,7 @@ void CountDownWatchForFinish() {
 		valLane2Cleared = LOW;
 		valStartInitiated = LOW;
 		Serial.print("_Lane1WonLane2Faulted: "); PRINTSTATS
-			Serial.println("\tRace result: Lane 1 Won because Lane 2 jumped the start.");
+		Serial.println("\tRace result: Lane 1 Won because Lane 2 jumped the start.");
 		Serial.print("\traceStartTime M: ");
 		Serial.println(raceStartTime);
 		Serial.print("\tlane1FinishTime N: ");
@@ -800,7 +793,7 @@ void CountDownWatchForFinish() {
 		valLane2Cleared = LOW;
 		valStartInitiated = LOW;
 		Serial.print("_TiedButUnsureHow: "); PRINTSTATS
-			Serial.println("\tRace result: TIED for lack of finding another state to finish.");
+		Serial.println("\tRace result: TIED for lack of finding another state to finish.");
 		Serial.print("\traceStartTime Q: ");
 		Serial.println(raceStartTime);
 		Serial.print("\tlane1FinishTime R: ");
@@ -945,30 +938,12 @@ void WatchForStaging() {
 
 // the loop routine runs over and over again forever:
 void loop() {
-	currentMillis = millis();
-	// every 10 seconds list time:
-	if (currentMillis - lastReportTime >= 1000)
-	{
-		lastReportTime = currentMillis;
-
-		//if ( !(state = RUNNING) ) {
-		//      Serial.print("looping in state : ");
-		//      Serial.println(state);
-		//}
-
-		/*
-			Serial.print("prevTime: ");
-			Serial.print(prevTime);
-			Serial.print("       currentMillis: ");
-			Serial.println(currentMillis);
-			//*/
-	}
-	prevTime = currentMillis;
 	valPressedStartButton = !digitalRead(startButton);  // read the input pin
 
-	//print out the value of the pushbutton
-	//  Serial.println(valPressedStartButton);
+	// display the value of the pushbutton on LED
 	digitalWrite(13, valPressedStartButton);
+
+	currentMillis = millis();
 
 	if (currentMillis >= timeToStopPowerToLane1WINdicator)
 	{
@@ -979,23 +954,9 @@ void loop() {
 		digitalWrite(lane2WINdicator, LOW);
 	}
 
-	/*
-	if (sdCardWorking && readyToPlayFanfare && !(valPressedStartButton)) {
-
-	Serial.println("");
-	Serial.print("readyToPlayFanfare: ");
-	Serial.println(readyToPlayFanfare);
-	playcomplete("PTDR.WAV");
-	readyToPlayFanfare = LOW;
-	Serial.print("readyToPlayFanfare: ");
-	Serial.println(readyToPlayFanfare);
-	}
-	//*/
-
 	switch (state)
 	{
-	case DEMO:
-		//RunDemo();
+	case RESET:
 		state = STAGING;
 		lastTime = millis();
 		lane1StageState = HIGH;
@@ -1032,18 +993,13 @@ void loop() {
 		break;
 		// TODO Add code to collect speed trap data
 		// TODO Add code to detect winner and flash lights for winning lane
-
-		//    if(millis()-RunningTime > RUNNING_TIMEOUT)
-		//      {
-		//      Serial.println("Running Timeout");
-		//      Stop();
-		//      }
+		// TODO Keep foul light on when other racer finishes and then trip windicator once racer has passed
 	default:
 		Serial.print("\tUnknown State: ");
 		Serial.println(state);
-		LightsOut(); // Should never get here
+		LightsOut(); // Should never get here... 5 second timeout before reset
 		delay(5000);
-		state = STAGING;
+		state = RESET;
 		break;
 	}
 }
