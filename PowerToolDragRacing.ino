@@ -1,3 +1,4 @@
+#include <digitalWriteFast.h>
 #include <FatReader.h>
 #include <SdReader.h>
 #include <avr/pgmspace.h>
@@ -128,13 +129,6 @@ boolean valPressedStartButton;
 
 boolean valStartInitiated = LOW;
 
-long stageTime1 = 0;
-long stageTime2 = 0;
-long stopTime1 = 0;
-long stopTime2 = 0;
-
-void LightsOut();
-
 boolean sdCardWorking = LOW;
 
 //* SD Card disable
@@ -194,6 +188,25 @@ void playfile(char *name) {
 	wave.play();
 }
 
+void LightsOut() {
+	//reset lights
+	digitalWriteFast(lane1PreStageLight, LOW);
+	digitalWriteFast(lane1StageLight, LOW);
+	digitalWriteFast(lane1Count3Light, LOW);
+	digitalWriteFast(lane1Count2Light, LOW);
+	digitalWriteFast(lane1Count1Light, LOW);
+	digitalWriteFast(lane1StartGreenLight, LOW);
+	digitalWriteFast(lane1FalseStartRedLight, LOW);
+
+	digitalWriteFast(lane2PreStageLight, LOW);
+	digitalWriteFast(lane2StageLight, LOW);
+	digitalWriteFast(lane2Count3Light, LOW);
+	digitalWriteFast(lane2Count2Light, LOW);
+	digitalWriteFast(lane2Count1Light, LOW);
+	digitalWriteFast(lane2StartGreenLight, LOW);
+	digitalWriteFast(lane2FalseStartRedLight, LOW);
+}
+
 // the setup routine runs once when you press reset:
 void setup() {
 	currentMillis = millis();
@@ -217,25 +230,23 @@ void setup() {
 	pinMode(lane2FalseStartRedLight, OUTPUT);
 	pinMode(lane2WINdicator, OUTPUT);
 
-	pinMode(   86,    INPUT);   // set pin to input
 	pinMode(     lane1StagingEye,    INPUT);   // set pin to input
-	digitalWrite(lane1StagingEye,    HIGH);    // turn on pullup resistors
+	digitalWriteFast(lane1StagingEye,    HIGH);    // turn on pullup resistors
 	pinMode(     lane1StartingEye,   INPUT);   // set pin to input
-	digitalWrite(lane1StartingEye,   HIGH);    // turn on pullup resistors
+	digitalWriteFast(lane1StartingEye,   HIGH);    // turn on pullup resistors
 	pinMode(     lane1SpeedTrapEye,  INPUT);   // set pin to input lane1SpeedTrapEye
-	digitalWrite(lane1SpeedTrapEye,  HIGH);    // turn on pullup resistors
+	digitalWriteFast(lane1SpeedTrapEye,  HIGH);    // turn on pullup resistors
 	pinMode(     lane1FinishLineEye, INPUT);   // set pin to input
-	digitalWrite(lane1FinishLineEye, HIGH);    // turn on pullup resistors
+	digitalWriteFast(lane1FinishLineEye, HIGH);    // turn on pullup resistors
 
 	pinMode(     lane2StagingEye,    INPUT);   // set pin to input
-	digitalWrite(lane2StagingEye,    HIGH);    // turn on pullup resistors
+	digitalWriteFast(lane2StagingEye,    HIGH);    // turn on pullup resistors
 	pinMode(     lane2StartingEye,   INPUT);   // set pin to input
-	digitalWrite(lane2StartingEye,   HIGH);    // turn on pullup resistors
+	digitalWriteFast(lane2StartingEye,   HIGH);    // turn on pullup resistors
 	pinMode(     lane2SpeedTrapEye,  INPUT);   // set pin to input
-	digitalWrite(lane2SpeedTrapEye,  HIGH);    // turn on pullup resistors
+	digitalWriteFast(lane2SpeedTrapEye,  HIGH);    // turn on pullup resistors
 	pinMode(     lane2FinishLineEye, INPUT);   // set pin to input
-	digitalWrite(lane2FinishLineEye, HIGH);    // turn on pullup resistors
-
+	digitalWriteFast(lane2FinishLineEye, HIGH);    // turn on pullup resistors
 
 	pinMode(startButton, INPUT_PULLUP);   // set pin to input
 	LightsOut();
@@ -341,25 +352,6 @@ void initSD()
 	}
 }
 
-void LightsOut() {
-	//reset lights
-	digitalWrite(lane1PreStageLight, LOW);
-	digitalWrite(lane1StageLight, LOW);
-	digitalWrite(lane1Count3Light, LOW);
-	digitalWrite(lane1Count2Light, LOW);
-	digitalWrite(lane1Count1Light, LOW);
-	digitalWrite(lane1StartGreenLight, LOW);
-	digitalWrite(lane1FalseStartRedLight, LOW);
-
-	digitalWrite(lane2PreStageLight, LOW);
-	digitalWrite(lane2StageLight, LOW);
-	digitalWrite(lane2Count3Light, LOW);
-	digitalWrite(lane2Count2Light, LOW);
-	digitalWrite(lane2Count1Light, LOW);
-	digitalWrite(lane2StartGreenLight, LOW);
-	digitalWrite(lane2FalseStartRedLight, LOW);
-}
-
 void Staging() {
 	currentMillis = millis();
 	if (currentMillis - lastTime >= 1000)
@@ -368,31 +360,31 @@ void Staging() {
 		lane1StageState = !lane1StageState;
 		lane2StageState = !lane2StageState;
 		if (LANE1STAGED == state)
-			digitalWrite(lane1PreStageLight, HIGH);
+			digitalWriteFast(lane1PreStageLight, HIGH);
 		else
-			digitalWrite(lane1PreStageLight, lane1StageState);
+			digitalWriteFast(lane1PreStageLight, lane1StageState);
 		if (LANE2STAGED == state)
-			digitalWrite(lane2PreStageLight, HIGH);
+			digitalWriteFast(lane2PreStageLight, HIGH);
 		else
-			digitalWrite(lane2PreStageLight, lane2StageState);
+			digitalWriteFast(lane2PreStageLight, lane2StageState);
 	}
 
-	valLane1Staged = !digitalRead(lane1StagingEye);       // read the input pin
-	valLane2Staged = !digitalRead(lane2StagingEye);       // read the input pin
-	valLane1Started = !digitalRead(lane1StartingEye);     // read the input pin
-	valLane2Started = !digitalRead(lane2StartingEye);     // read the input pin
-	valLane1Trapped = !digitalRead(lane1SpeedTrapEye);   // read the input pin
-	valLane2Trapped = !digitalRead(lane2SpeedTrapEye);    // read the input pin
-	valLane1Finished = !digitalRead(lane1FinishLineEye); // read the input pin
-	valLane2Finished = !digitalRead(lane2FinishLineEye);  // read the input pin
-	valPressedStartButton = !digitalRead(startButton);    // read the input pin
+	valLane1Staged = !digitalReadFast(lane1StagingEye);       // read the input pin
+	valLane2Staged = !digitalReadFast(lane2StagingEye);       // read the input pin
+	valLane1Started = !digitalReadFast(lane1StartingEye);     // read the input pin
+	valLane2Started = !digitalReadFast(lane2StartingEye);     // read the input pin
+	valLane1Trapped = !digitalReadFast(lane1SpeedTrapEye);   // read the input pin
+	valLane2Trapped = !digitalReadFast(lane2SpeedTrapEye);    // read the input pin
+	valLane1Finished = !digitalReadFast(lane1FinishLineEye); // read the input pin
+	valLane2Finished = !digitalReadFast(lane2FinishLineEye);  // read the input pin
+	valPressedStartButton = !digitalReadFast(startButton);    // read the input pin
 
 	if (valLane1Finished) valLane1HasFinished = HIGH;
 	if (valLane2Finished) valLane2HasFinished = HIGH;
 	if (valPressedStartButton) valStartInitiated = HIGH;
 
 	//print out the value of the pushbutton
-	digitalWrite(13, valPressedStartButton);
+	digitalWriteFast(13, valPressedStartButton);
 
 	if (!valLane1Staged || valLane1Started) lastTimeLane1Unstaged = millis();
 	if (!valLane2Staged || valLane2Started) lastTimeLane2Unstaged = millis();
@@ -410,14 +402,14 @@ void Staging() {
 		state = BOTHSTAGED;
 	}
         if (valStartInitiated) state = BOTHSTAGED;
-	digitalWrite(lane1StageLight, valLane1Staged);
-	digitalWrite(lane2StageLight, valLane2Staged);
-	digitalWrite(lane1Count1Light, valLane1Started);
-	digitalWrite(lane2Count1Light, valLane2Started);
-	digitalWrite(lane1StartGreenLight, valLane1Trapped);
-	digitalWrite(lane2StartGreenLight, valLane2Trapped);
-	digitalWrite(lane1FalseStartRedLight, valLane1Finished);
-	digitalWrite(lane2FalseStartRedLight, valLane2Finished);
+	digitalWriteFast(lane1StageLight, valLane1Staged);
+	digitalWriteFast(lane2StageLight, valLane2Staged);
+	digitalWriteFast(lane1Count1Light, valLane1Started);
+	digitalWriteFast(lane2Count1Light, valLane2Started);
+	digitalWriteFast(lane1StartGreenLight, valLane1Trapped);
+	digitalWriteFast(lane2StartGreenLight, valLane2Trapped);
+	digitalWriteFast(lane1FalseStartRedLight, valLane1Finished);
+	digitalWriteFast(lane2FalseStartRedLight, valLane2Finished);
 }
 
 void BothStaged() {
@@ -430,38 +422,38 @@ void BothStaged() {
 		//Serial.println("blanking both signs after 1 more second.");
 	}
 
-	digitalWrite(lane1PreStageLight, HIGH);
-	digitalWrite(lane2PreStageLight, HIGH);
-	digitalWrite(lane1StageLight, HIGH);
-	digitalWrite(lane2StageLight, HIGH);
-	digitalWrite(lane1Count2Light, LOW);
-	digitalWrite(lane2Count2Light, LOW);
-	digitalWrite(lane1Count1Light, LOW);
-	digitalWrite(lane2Count1Light, LOW);
-	digitalWrite(lane1StartGreenLight, LOW);
-	digitalWrite(lane2StartGreenLight, LOW);
-	digitalWrite(lane1FalseStartRedLight, LOW);
-	digitalWrite(lane2FalseStartRedLight, LOW);
+	digitalWriteFast(lane1PreStageLight, HIGH);
+	digitalWriteFast(lane2PreStageLight, HIGH);
+	digitalWriteFast(lane1StageLight, HIGH);
+	digitalWriteFast(lane2StageLight, HIGH);
+	digitalWriteFast(lane1Count2Light, LOW);
+	digitalWriteFast(lane2Count2Light, LOW);
+	digitalWriteFast(lane1Count1Light, LOW);
+	digitalWriteFast(lane2Count1Light, LOW);
+	digitalWriteFast(lane1StartGreenLight, LOW);
+	digitalWriteFast(lane2StartGreenLight, LOW);
+	digitalWriteFast(lane1FalseStartRedLight, LOW);
+	digitalWriteFast(lane2FalseStartRedLight, LOW);
 
-	valLane1Staged = !digitalRead(lane1StagingEye);     // read the input pin
-	valLane2Staged = !digitalRead(lane2StagingEye);     // read the input pin
-	valLane1Started = !digitalRead(lane1StartingEye);   // read the input pin
-	valLane2Started = !digitalRead(lane2StartingEye);   // read the input pin
-	valLane1Trapped = !digitalRead(lane1SpeedTrapEye);    // read the input pin
-	valLane2Trapped = !digitalRead(lane2SpeedTrapEye);    // read the input pin
-	valLane1Finished = !digitalRead(lane1FinishLineEye);  // read the input pin
-	valLane2Finished = !digitalRead(lane2FinishLineEye);  // read the input pin
+	valLane1Staged = !digitalReadFast(lane1StagingEye);     // read the input pin
+	valLane2Staged = !digitalReadFast(lane2StagingEye);     // read the input pin
+	valLane1Started = !digitalReadFast(lane1StartingEye);   // read the input pin
+	valLane2Started = !digitalReadFast(lane2StartingEye);   // read the input pin
+	valLane1Trapped = !digitalReadFast(lane1SpeedTrapEye);    // read the input pin
+	valLane2Trapped = !digitalReadFast(lane2SpeedTrapEye);    // read the input pin
+	valLane1Finished = !digitalReadFast(lane1FinishLineEye);  // read the input pin
+	valLane2Finished = !digitalReadFast(lane2FinishLineEye);  // read the input pin
 
 	if (!valLane1Staged && BOTHSTAGED == state) state = LANE2STAGED;
 	if (!valLane2Staged && BOTHSTAGED == state) state = LANE1STAGED;
 	if (!valLane1Staged && LANE1STAGED == state) state = STAGING;
 	if (!valLane2Staged && LANE2STAGED == state) state = STAGING;
 
-	valPressedStartButton = !digitalRead(startButton);  // read the input pin
+	valPressedStartButton = !digitalReadFast(startButton);  // read the input pin
 
 	if (valPressedStartButton) valStartInitiated = HIGH;
 
-	digitalWrite(13, valPressedStartButton);		  //display the value of the pushbutton
+	digitalWriteFast(13, valPressedStartButton);		  //display the value of the pushbutton
 
 	// wait for race controller to press the READY button
 	// for backup, just count off 60000 seconds with the racers staged behind the start line
@@ -484,20 +476,20 @@ void BothStaged() {
 }
 
 void CountDownWatchForFinish() {
-	valLane2Fault = !digitalRead(lane2StartingEye);   // read the input pin
-	valLane1Started = !digitalRead(lane1StartingEye);     // read the input pin
-	valLane2Started = !digitalRead(lane2StartingEye);     // read the input pin
-	valLane1Trapped = !digitalRead(lane1SpeedTrapEye);   // read the input pin
-	valLane2Trapped = !digitalRead(lane2SpeedTrapEye);    // read the input pin
-	valLane1Finished = !digitalRead(lane1FinishLineEye); // read the input pin
-	valLane2Finished = !digitalRead(lane2FinishLineEye);  // read the input pin
-	valPressedStartButton = !digitalRead(startButton);    // read the input pin
+	valLane2Fault = !digitalReadFast(lane2StartingEye);   // read the input pin
+	valLane1Started = !digitalReadFast(lane1StartingEye);     // read the input pin
+	valLane2Started = !digitalReadFast(lane2StartingEye);     // read the input pin
+	valLane1Trapped = !digitalReadFast(lane1SpeedTrapEye);   // read the input pin
+	valLane2Trapped = !digitalReadFast(lane2SpeedTrapEye);    // read the input pin
+	valLane1Finished = !digitalReadFast(lane1FinishLineEye); // read the input pin
+	valLane2Finished = !digitalReadFast(lane2FinishLineEye);  // read the input pin
+	valPressedStartButton = !digitalReadFast(startButton);    // read the input pin
 
 	if (valLane1Trapped && (0 == lane1TrapTime))
 	{
 		lane1TrapTime = millis();
 	}
-	if (valLane1Trapped && (0 == lane2TrapTime))
+	if (valLane2Trapped && (0 == lane2TrapTime))
 	{
 		lane2TrapTime = millis();
 	}
@@ -508,14 +500,14 @@ void CountDownWatchForFinish() {
 			lane1StartTime = millis();
 		if (!raceStarted)
 		{
-		        Serial1.println(-33);
+			Serial1.println(-33);
 			valLane1Faulted = HIGH;
-			digitalWrite(lane1PreStageLight, LOW);
-			digitalWrite(lane1StageLight, LOW);
-			digitalWrite(lane1Count3Light, LOW);
-			digitalWrite(lane1Count2Light, LOW);
-			digitalWrite(lane1Count1Light, LOW);
-			digitalWrite(lane1FalseStartRedLight, HIGH);
+			digitalWriteFast(lane1PreStageLight, LOW);
+			digitalWriteFast(lane1StageLight, LOW);
+			digitalWriteFast(lane1Count3Light, LOW);
+			digitalWriteFast(lane1Count2Light, LOW);
+			digitalWriteFast(lane1Count1Light, LOW);
+			digitalWriteFast(lane1FalseStartRedLight, HIGH);
 		}
 	}
 	if (valLane2Started)
@@ -524,21 +516,21 @@ void CountDownWatchForFinish() {
 			lane2StartTime = millis();
 		if (!raceStarted)
 		{
-		        Serial2.println(-33);
+			Serial2.println(-33);
 			valLane2Faulted = HIGH;
-			digitalWrite(lane2PreStageLight, LOW);
-			digitalWrite(lane2StageLight, LOW);
-			digitalWrite(lane2Count3Light, LOW);
-			digitalWrite(lane2Count2Light, LOW);
-			digitalWrite(lane2Count1Light, LOW);
-			digitalWrite(lane2FalseStartRedLight, HIGH);
+			digitalWriteFast(lane2PreStageLight, LOW);
+			digitalWriteFast(lane2StageLight, LOW);
+			digitalWriteFast(lane2Count3Light, LOW);
+			digitalWriteFast(lane2Count2Light, LOW);
+			digitalWriteFast(lane2Count1Light, LOW);
+			digitalWriteFast(lane2FalseStartRedLight, HIGH);
 		}
 	}
 	currentMillis = millis();
 	if (!count3State && (currentMillis >= timeCountdownStarted + 500))
 	{
-		if (!valLane1Faulted) digitalWrite(lane1Count3Light, HIGH);
-		if (!valLane2Faulted) digitalWrite(lane2Count3Light, HIGH);
+		if (!valLane1Faulted) digitalWriteFast(lane1Count3Light, HIGH);
+		if (!valLane2Faulted) digitalWriteFast(lane2Count3Light, HIGH);
 //		Serial1.println(3);
 //		Serial2.println(3);
 		count3State = HIGH;
@@ -547,19 +539,27 @@ void CountDownWatchForFinish() {
 	}
 	if (!count2State && (currentMillis >= timeCountdownStarted + 1000))
 	{
-		if (!valLane1Faulted) digitalWrite(lane1Count2Light, HIGH);
-		if (!valLane2Faulted) digitalWrite(lane2Count2Light, HIGH);
-//		Serial1.println(2);
-//		Serial2.println(2);
+		if (!valLane1Faulted) digitalWriteFast(lane1Count2Light, HIGH);
+		if (!valLane2Faulted) digitalWriteFast(lane2Count2Light, HIGH);
+		digitalWriteFast(lane1PreStageLight, LOW);
+		digitalWriteFast(lane2PreStageLight, LOW);
+		digitalWriteFast(lane1StageLight, LOW);
+		digitalWriteFast(lane2StageLight, LOW);
+		digitalWriteFast(lane1Count3Light, LOW);
+		digitalWriteFast(lane2Count3Light, LOW);
+		//		Serial1.println(2);
+		//		Serial2.println(2);
 		count2State = HIGH;
 		Serial.print("\tCounting 2 with currentMillis: ");
 		Serial.println(currentMillis);
 	}
 	if (!count1State && (currentMillis >= timeCountdownStarted + 1500))
 	{
-		if (!valLane1Faulted) digitalWrite(lane1Count1Light, HIGH);
-		if (!valLane2Faulted) digitalWrite(lane2Count1Light, HIGH);
-//		Serial1.println(1);
+		if (!valLane1Faulted) digitalWriteFast(lane1Count1Light, HIGH);
+		if (!valLane2Faulted) digitalWriteFast(lane2Count1Light, HIGH);
+		digitalWriteFast(lane1Count2Light, LOW);
+		digitalWriteFast(lane2Count2Light, LOW);
+		//		Serial1.println(1);
 //		Serial2.println(1);
 		count1State = HIGH;
 		Serial.print("\tCounting 1 with currentMillis: ");
@@ -578,9 +578,11 @@ void CountDownWatchForFinish() {
 		lane2FinishTime = 0;
 
 		if (!valLane1Faulted)
-			digitalWrite(lane1StartGreenLight, HIGH);
+			digitalWriteFast(lane1StartGreenLight, HIGH);
 		if (!valLane2Faulted)
-			digitalWrite(lane2StartGreenLight, HIGH);
+			digitalWriteFast(lane2StartGreenLight, HIGH);
+		digitalWriteFast(lane1Count1Light, LOW);
+		digitalWriteFast(lane2Count1Light, LOW);
 		if (valLane1Faulted && valLane2Faulted)
 		{
 			state = BOTHFAULT;
@@ -621,8 +623,8 @@ void CountDownWatchForFinish() {
 //*/
 	}
 
-	valLane1Finished = !digitalRead(lane1FinishLineEye);  // read the input pin
-	valLane2Finished = !digitalRead(lane2FinishLineEye);  // read the input pin
+	valLane1Finished = !digitalReadFast(lane1FinishLineEye);  // read the input pin
+	valLane2Finished = !digitalReadFast(lane2FinishLineEye);  // read the input pin
 
 	if (valLane1Finished && valLane2Finished && !valLane1Faulted && !valLane2Faulted && raceStarted)
 	{
@@ -662,15 +664,15 @@ void CountDownWatchForFinish() {
 		lane1FinishTime = millis();
 		Serial1.println(lane1FinishTime - raceStartTime);
 		state = LANE1WON;
-		digitalWrite(lane1WINdicator, HIGH);
+		digitalWriteFast(lane1WINdicator, HIGH);
 		timeToStopPowerToLane1WINdicator = lane1FinishTime + 750;
-		digitalWrite(lane2PreStageLight, LOW);
-		digitalWrite(lane2StageLight, LOW);
-		digitalWrite(lane2Count3Light, LOW);
-		digitalWrite(lane2Count2Light, LOW);
-		digitalWrite(lane2Count1Light, LOW);
-		digitalWrite(lane2StartGreenLight, LOW);
-		digitalWrite(lane2FalseStartRedLight, LOW);
+		digitalWriteFast(lane2PreStageLight, LOW);
+		digitalWriteFast(lane2StageLight, LOW);
+		digitalWriteFast(lane2Count3Light, LOW);
+		digitalWriteFast(lane2Count2Light, LOW);
+		digitalWriteFast(lane2Count1Light, LOW);
+		digitalWriteFast(lane2StartGreenLight, LOW);
+		digitalWriteFast(lane2FalseStartRedLight, LOW);
 		lastTimeStaged = millis();
 		valLane1Cleared = LOW;
 		valLane2Cleared = LOW;
@@ -694,15 +696,15 @@ void CountDownWatchForFinish() {
 		lane2FinishTime = millis();
 		Serial2.println(lane2FinishTime - raceStartTime);
 		state = LANE2WON;
-		digitalWrite(lane2WINdicator, HIGH);
+		digitalWriteFast(lane2WINdicator, HIGH);
 		timeToStopPowerToLane2WINdicator = lane2FinishTime + 750;
-		digitalWrite(lane1PreStageLight, LOW);
-		digitalWrite(lane1StageLight, LOW);
-		digitalWrite(lane1Count3Light, LOW);
-		digitalWrite(lane1Count2Light, LOW);
-		digitalWrite(lane1Count1Light, LOW);
-		digitalWrite(lane1StartGreenLight, LOW);
-		digitalWrite(lane1FalseStartRedLight, LOW);
+		digitalWriteFast(lane1PreStageLight, LOW);
+		digitalWriteFast(lane1StageLight, LOW);
+		digitalWriteFast(lane1Count3Light, LOW);
+		digitalWriteFast(lane1Count2Light, LOW);
+		digitalWriteFast(lane1Count1Light, LOW);
+		digitalWriteFast(lane1StartGreenLight, LOW);
+		digitalWriteFast(lane1FalseStartRedLight, LOW);
 		lastTimeStaged = millis();
 		valLane1Cleared = LOW;
 		valLane2Cleared = LOW;
@@ -727,13 +729,13 @@ void CountDownWatchForFinish() {
 		lane2FinishTime = millis();
 		Serial2.println(lane2FinishTime - raceStartTime);
 		state = LANE2WON;
-		digitalWrite(lane1PreStageLight, LOW);
-		digitalWrite(lane1StageLight, LOW);
-		digitalWrite(lane1Count3Light, LOW);
-		digitalWrite(lane1Count2Light, LOW);
-		digitalWrite(lane1Count1Light, LOW);
-		digitalWrite(lane1StartGreenLight, LOW);
-		digitalWrite(lane1FalseStartRedLight, LOW);
+		digitalWriteFast(lane1PreStageLight, LOW);
+		digitalWriteFast(lane1StageLight, LOW);
+		digitalWriteFast(lane1Count3Light, LOW);
+		digitalWriteFast(lane1Count2Light, LOW);
+		digitalWriteFast(lane1Count1Light, LOW);
+		digitalWriteFast(lane1StartGreenLight, LOW);
+		digitalWriteFast(lane1FalseStartRedLight, LOW);
 		lastTimeStaged = millis();
 		valLane1Cleared = LOW;
 		valLane2Cleared = LOW;
@@ -757,13 +759,13 @@ void CountDownWatchForFinish() {
 		lane1FinishTime = millis();
 		Serial1.println(lane1FinishTime - raceStartTime);
 		state = LANE1WON;
-		digitalWrite(lane2PreStageLight, LOW);
-		digitalWrite(lane2StageLight, LOW);
-		digitalWrite(lane2Count3Light, LOW);
-		digitalWrite(lane2Count2Light, LOW);
-		digitalWrite(lane2Count1Light, LOW);
-		digitalWrite(lane2StartGreenLight, LOW);
-		digitalWrite(lane2FalseStartRedLight, LOW);
+		digitalWriteFast(lane2PreStageLight, LOW);
+		digitalWriteFast(lane2StageLight, LOW);
+		digitalWriteFast(lane2Count3Light, LOW);
+		digitalWriteFast(lane2Count2Light, LOW);
+		digitalWriteFast(lane2Count1Light, LOW);
+		digitalWriteFast(lane2StartGreenLight, LOW);
+		digitalWriteFast(lane2FalseStartRedLight, LOW);
 		lastTimeStaged = millis();
 		valLane1Cleared = LOW;
 		valLane2Cleared = LOW;
@@ -824,10 +826,10 @@ void CountDownWatchForFinish() {
 
 
 void WatchForStaging() {
-	valLane1Staged = !digitalRead(lane1StagingEye);     // read the input pin
-	valLane2Staged = !digitalRead(lane2StagingEye);     // read the input pin
-	valLane1Finished = !digitalRead(lane1FinishLineEye); // read the input pin
-	valLane2Finished = !digitalRead(lane2FinishLineEye);  // read the input pin
+	valLane1Staged = !digitalReadFast(lane1StagingEye);     // read the input pin
+	valLane2Staged = !digitalReadFast(lane2StagingEye);     // read the input pin
+	valLane1Finished = !digitalReadFast(lane1FinishLineEye); // read the input pin
+	valLane2Finished = !digitalReadFast(lane2FinishLineEye);  // read the input pin
 
 	if (valLane1Finished)
 	{
@@ -849,11 +851,11 @@ void WatchForStaging() {
 
 	if (currentMillis >= timeToStopPowerToLane1WINdicator)
 	{
-		digitalWrite(lane1WINdicator, LOW);
+		digitalWriteFast(lane1WINdicator, LOW);
 	}
 	if (currentMillis >= timeToStopPowerToLane2WINdicator)
 	{
-		digitalWrite(lane2WINdicator, LOW);
+		digitalWriteFast(lane2WINdicator, LOW);
 	}
 
 	if (currentMillis - lastTime >= 2000)
@@ -862,12 +864,12 @@ void WatchForStaging() {
 		blinkState = !blinkState;
 		if (TIED == state)
 		{
-			digitalWrite(lane1Count3Light, blinkState);
-			digitalWrite(lane1Count2Light, blinkState);
-			digitalWrite(lane1Count1Light, blinkState);
-			digitalWrite(lane2Count3Light, blinkState);
-			digitalWrite(lane2Count2Light, blinkState);
-			digitalWrite(lane2Count1Light, blinkState);
+			digitalWriteFast(lane1Count3Light, blinkState);
+			digitalWriteFast(lane1Count2Light, blinkState);
+			digitalWriteFast(lane1Count1Light, blinkState);
+			digitalWriteFast(lane2Count3Light, blinkState);
+			digitalWriteFast(lane2Count2Light, blinkState);
+			digitalWriteFast(lane2Count1Light, blinkState);
 		}
 	}
 
@@ -938,20 +940,20 @@ void WatchForStaging() {
 
 // the loop routine runs over and over again forever:
 void loop() {
-	valPressedStartButton = !digitalRead(startButton);  // read the input pin
+	valPressedStartButton = !digitalReadFast(startButton);  // read the input pin
 
 	// display the value of the pushbutton on LED
-	digitalWrite(13, valPressedStartButton);
+	digitalWriteFast(13, valPressedStartButton);
 
 	currentMillis = millis();
 
 	if (currentMillis >= timeToStopPowerToLane1WINdicator)
 	{
-		digitalWrite(lane1WINdicator, LOW);
+		digitalWriteFast(lane1WINdicator, LOW);
 	}
 	if (currentMillis >= timeToStopPowerToLane2WINdicator)
 	{
-		digitalWrite(lane2WINdicator, LOW);
+		digitalWriteFast(lane2WINdicator, LOW);
 	}
 
 	switch (state)
