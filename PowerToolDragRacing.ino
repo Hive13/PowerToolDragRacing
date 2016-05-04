@@ -46,25 +46,25 @@ WaveHC wave;      // This is the only wave (audio) object, since we will only pl
 
 #define PRINTSTATS Serial.print(raceStartTime); Serial.print(","); Serial.print(lane1StartTime); Serial.print(","); Serial.print(lane1TrapTime); Serial.print(","); Serial.print(lane1FinishTime); Serial.print(","); Serial.print(lane2StartTime); Serial.print(","); Serial.print(lane2TrapTime); Serial.print(","); Serial.println(lane2FinishTime);
 
-const int lane1PreStageLight      = 22;  // Arduino digital output on pin 22 = Lane 1 pre-stage yellow light pair
-const int lane1StageLight         = 24;  // Arduino digital output on pin 24 = Lane 1 stage yellow light pair
-const int lane1Count3Light        = 26;  // Arduino digital output on pin 26 = Lane 1 count 3 yellow light
-const int lane1Count2Light        = 28;  // Arduino digital output on pin 28 = Lane 1 count 2 yellow light
-const int lane1Count1Light        = 30;  // Arduino digital output on pin 30 = Lane 1 count 1 yellow light
-const int lane1StartGreenLight    = 32;  // Arduino digital output on pin 32 = Lane 1 start  green light
-const int lane1FalseStartRedLight = 34;  // Arduino digital output on pin 34 = Lane 1 false-start red light
-const int lane1WINdicator		  = 36;  // Arduino digital output on pin 36 = Lane 1 WINdicatiion
+#define lane1PreStageLight       22  // Arduino digital output on pin 22 = Lane 1 pre-stage yellow light pair
+#define lane1StageLight          24  // Arduino digital output on pin 24 = Lane 1 stage yellow light pair
+#define lane1Count3Light         26  // Arduino digital output on pin 26 = Lane 1 count 3 yellow light
+#define lane1Count2Light         28  // Arduino digital output on pin 28 = Lane 1 count 2 yellow light
+#define lane1Count1Light         30  // Arduino digital output on pin 30 = Lane 1 count 1 yellow light
+#define lane1StartGreenLight     32  // Arduino digital output on pin 32 = Lane 1 start  green light
+#define lane1FalseStartRedLight  34  // Arduino digital output on pin 34 = Lane 1 false-start red light
+#define lane1WINdicator		     36  // Arduino digital output on pin 36 = Lane 1 WINdicatiion
 
-const int lane2PreStageLight      = 23;  // Arduino digital output on pin 23 = Lane 2 pre-stage yellow light pair
-const int lane2StageLight         = 25;  // Arduino digital output on pin 25 = Lane 2 stage yellow light pair
-const int lane2Count3Light        = 27;  // Arduino digital output on pin 27 = Lane 2 count 3 yellow light
-const int lane2Count2Light        = 29;  // Arduino digital output on pin 29 = Lane 2 count 2 yellow light
-const int lane2Count1Light        = 31;  // Arduino digital output on pin 31 = Lane 2 count 1 yellow light
-const int lane2StartGreenLight    = 33;  // Arduino digital output on pin 33 = Lane 2 start  green light
-const int lane2FalseStartRedLight = 35;  // Arduino digital output on pin 35 = Lane 2 false-start red light
-const int lane2WINdicator         = 37;  // Arduino digital output on pin 37 = Lane 2 WINdicatiion
+#define lane2PreStageLight       23  // Arduino digital output on pin 23 = Lane 2 pre-stage yellow light pair
+#define lane2StageLight          25  // Arduino digital output on pin 25 = Lane 2 stage yellow light pair
+#define lane2Count3Light         27  // Arduino digital output on pin 27 = Lane 2 count 3 yellow light
+#define lane2Count2Light         29  // Arduino digital output on pin 29 = Lane 2 count 2 yellow light
+#define lane2Count1Light         31  // Arduino digital output on pin 31 = Lane 2 count 1 yellow light
+#define lane2StartGreenLight     33  // Arduino digital output on pin 33 = Lane 2 start  green light
+#define lane2FalseStartRedLight  35  // Arduino digital output on pin 35 = Lane 2 false-start red light
+#define lane2WINdicator          37  // Arduino digital output on pin 37 = Lane 2 WINdicatiion
 
-const int startButton = 45;              // Arduino digital input on pin 45 = Race Controller's start countdown button
+#define startButton              45  // Arduino digital input on pin 45 = Race Controller's start countdown button
 
 
 int state = RESET;        // master variable for the state machine
@@ -230,29 +230,29 @@ void setup() {
 	pinMode(lane2FalseStartRedLight, OUTPUT);
 	pinMode(lane2WINdicator, OUTPUT);
 
-	pinMode(     lane1StagingEye,    INPUT);   // set pin to input
+	pinMode(		 lane1StagingEye,    INPUT);   // set pin to input
 	digitalWriteFast(lane1StagingEye,    HIGH);    // turn on pullup resistors
-	pinMode(     lane1StartingEye,   INPUT);   // set pin to input
+	pinMode(		 lane1StartingEye,   INPUT);   // set pin to input
 	digitalWriteFast(lane1StartingEye,   HIGH);    // turn on pullup resistors
-	pinMode(     lane1SpeedTrapEye,  INPUT);   // set pin to input lane1SpeedTrapEye
+	pinMode(		 lane1SpeedTrapEye,  INPUT);   // set pin to input lane1SpeedTrapEye
 	digitalWriteFast(lane1SpeedTrapEye,  HIGH);    // turn on pullup resistors
-	pinMode(     lane1FinishLineEye, INPUT);   // set pin to input
+	pinMode(		 lane1FinishLineEye, INPUT);   // set pin to input
 	digitalWriteFast(lane1FinishLineEye, HIGH);    // turn on pullup resistors
 
-	pinMode(     lane2StagingEye,    INPUT);   // set pin to input
+	pinMode(		 lane2StagingEye,    INPUT);   // set pin to input
 	digitalWriteFast(lane2StagingEye,    HIGH);    // turn on pullup resistors
-	pinMode(     lane2StartingEye,   INPUT);   // set pin to input
+	pinMode(		 lane2StartingEye,   INPUT);   // set pin to input
 	digitalWriteFast(lane2StartingEye,   HIGH);    // turn on pullup resistors
-	pinMode(     lane2SpeedTrapEye,  INPUT);   // set pin to input
+	pinMode(		 lane2SpeedTrapEye,  INPUT);   // set pin to input
 	digitalWriteFast(lane2SpeedTrapEye,  HIGH);    // turn on pullup resistors
-	pinMode(     lane2FinishLineEye, INPUT);   // set pin to input
+	pinMode(		 lane2FinishLineEye, INPUT);   // set pin to input
 	digitalWriteFast(lane2FinishLineEye, HIGH);    // turn on pullup resistors
 
 	pinMode(startButton, INPUT_PULLUP);   // set pin to input
 	LightsOut();
 
 	// set up serial port
-	Serial.begin(9600);
+	Serial.begin(115200);
 	Serial1.begin(9600);
 	Serial2.begin(9600);
 	putstring_nl("WaveHC with 6 buttons");
@@ -401,9 +401,11 @@ void Staging() {
 		//Serial.println("blanking both signs.");
 		state = BOTHSTAGED;
 	}
-        if (valStartInitiated) state = BOTHSTAGED;
+	if (valStartInitiated) state = BOTHSTAGED;
+
 	digitalWriteFast(lane1StageLight, valLane1Staged);
 	digitalWriteFast(lane2StageLight, valLane2Staged);
+	// the following code allows us to check if each track sensor is working
 	digitalWriteFast(lane1Count1Light, valLane1Started);
 	digitalWriteFast(lane2Count1Light, valLane2Started);
 	digitalWriteFast(lane1StartGreenLight, valLane1Trapped);
@@ -439,10 +441,10 @@ void BothStaged() {
 	valLane2Staged = !digitalReadFast(lane2StagingEye);     // read the input pin
 	valLane1Started = !digitalReadFast(lane1StartingEye);   // read the input pin
 	valLane2Started = !digitalReadFast(lane2StartingEye);   // read the input pin
-	valLane1Trapped = !digitalReadFast(lane1SpeedTrapEye);    // read the input pin
-	valLane2Trapped = !digitalReadFast(lane2SpeedTrapEye);    // read the input pin
-	valLane1Finished = !digitalReadFast(lane1FinishLineEye);  // read the input pin
-	valLane2Finished = !digitalReadFast(lane2FinishLineEye);  // read the input pin
+	//valLane1Trapped = !digitalReadFast(lane1SpeedTrapEye);    // read the input pin
+	//valLane2Trapped = !digitalReadFast(lane2SpeedTrapEye);    // read the input pin
+	//valLane1Finished = !digitalReadFast(lane1FinishLineEye);  // read the input pin
+	//valLane2Finished = !digitalReadFast(lane2FinishLineEye);  // read the input pin
 
 	if (!valLane1Staged && BOTHSTAGED == state) state = LANE2STAGED;
 	if (!valLane2Staged && BOTHSTAGED == state) state = LANE1STAGED;
@@ -531,8 +533,8 @@ void CountDownWatchForFinish() {
 	{
 		if (!valLane1Faulted) digitalWriteFast(lane1Count3Light, HIGH);
 		if (!valLane2Faulted) digitalWriteFast(lane2Count3Light, HIGH);
-//		Serial1.println(3);
-//		Serial2.println(3);
+		//		Serial1.println(3);
+		//		Serial2.println(3);
 		count3State = HIGH;
 		Serial.print("\tCounting 3 with currentMillis: ");
 		Serial.println(currentMillis);
@@ -560,7 +562,7 @@ void CountDownWatchForFinish() {
 		digitalWriteFast(lane1Count2Light, LOW);
 		digitalWriteFast(lane2Count2Light, LOW);
 		//		Serial1.println(1);
-//		Serial2.println(1);
+		//		Serial2.println(1);
 		count1State = HIGH;
 		Serial.print("\tCounting 1 with currentMillis: ");
 		Serial.println(currentMillis);
@@ -588,7 +590,7 @@ void CountDownWatchForFinish() {
 			state = BOTHFAULT;
 			// DEBUG print // Serial.println("Race result: Both lanes faulted.");
 			Serial.print("_DualFault: "); PRINTSTATS
-				lastTimeStaged = millis();
+			lastTimeStaged = millis();
 		}
 		// DEBUG print // Serial.println("Countdown complete with timeCountdownStarted: ");
 		// DEBUG print // Serial.println(timeCountdownStarted);
@@ -632,21 +634,25 @@ void CountDownWatchForFinish() {
 		Serial1.println(lane1FinishTime - raceStartTime);
 		Serial2.println(lane2FinishTime - raceStartTime);
 		state = TIED;
+		digitalWriteFast(lane1PreStageLight, HIGH);
+		digitalWriteFast(lane1StageLight, HIGH);
+		digitalWriteFast(lane2PreStageLight, HIGH);
+		digitalWriteFast(lane2StageLight, HIGH);
 		lastTimeStaged = millis();
 		valLane1Cleared = LOW;
 		valLane2Cleared = LOW;
 		valStartInitiated = LOW;
 		Serial.print("_TIED: "); PRINTSTATS
 
-			// DEBUG print // Serial.println("Race result: TIED.");
-			// DEBUG print // Serial.print("raceStartTime: ");
-			// DEBUG print // Serial.println(raceStartTime);
-			// DEBUG print // Serial.print("lane1FinishTime: ");
-			// DEBUG print // Serial.println(lane1FinishTime);
-			// DEBUG print // Serial.print("lane2FinishTime: ");
-			// DEBUG print // Serial.println(lane2FinishTime);
-			// DEBUG print // Serial.println("");
-			Serial.print("\tLane 1 Elapsed Time A: ");
+		// DEBUG print // Serial.println("Race result: TIED.");
+		// DEBUG print // Serial.print("raceStartTime: ");
+		// DEBUG print // Serial.println(raceStartTime);
+		// DEBUG print // Serial.print("lane1FinishTime: ");
+		// DEBUG print // Serial.println(lane1FinishTime);
+		// DEBUG print // Serial.print("lane2FinishTime: ");
+		// DEBUG print // Serial.println(lane2FinishTime);
+		// DEBUG print // Serial.println("");
+		Serial.print("\tLane 1 Elapsed Time A: ");
 		elapsedTime = lane1FinishTime - raceStartTime;
 		Serial.println(elapsedTime / 1000.0);
 		Serial.print("\tLane 1 Trap Time B: ");
@@ -666,6 +672,8 @@ void CountDownWatchForFinish() {
 		state = LANE1WON;
 		digitalWriteFast(lane1WINdicator, HIGH);
 		timeToStopPowerToLane1WINdicator = lane1FinishTime + 750;
+		digitalWriteFast(lane1PreStageLight, HIGH);
+		digitalWriteFast(lane1StageLight, HIGH);
 		digitalWriteFast(lane2PreStageLight, LOW);
 		digitalWriteFast(lane2StageLight, LOW);
 		digitalWriteFast(lane2Count3Light, LOW);
@@ -678,13 +686,13 @@ void CountDownWatchForFinish() {
 		valLane2Cleared = LOW;
 		valStartInitiated = LOW;
 		Serial.print("_Lane1Won: "); PRINTSTATS
-			// DEBUG print // Serial.println("Race result: Lane 1 Won.");
-			// DEBUG print // Serial.print("raceStartTime: ");
-			// DEBUG print // Serial.println(raceStartTime);
-			// DEBUG print // Serial.print("lane1FinishTime: ");
-			// DEBUG print // Serial.println(lane1FinishTime);
-			// DEBUG print // Serial.println("");
-			Serial.print("\tLane 1 Elapsed Time E: ");
+		// DEBUG print // Serial.println("Race result: Lane 1 Won.");
+		// DEBUG print // Serial.print("raceStartTime: ");
+		// DEBUG print // Serial.println(raceStartTime);
+		// DEBUG print // Serial.print("lane1FinishTime: ");
+		// DEBUG print // Serial.println(lane1FinishTime);
+		// DEBUG print // Serial.println("");
+		Serial.print("\tLane 1 Elapsed Time E: ");
 		elapsedTime = (lane1FinishTime - raceStartTime);
 		Serial.println(elapsedTime / 1000.0);
 		Serial.print("\tLane 1 Trap Time F: ");
@@ -698,6 +706,8 @@ void CountDownWatchForFinish() {
 		state = LANE2WON;
 		digitalWriteFast(lane2WINdicator, HIGH);
 		timeToStopPowerToLane2WINdicator = lane2FinishTime + 750;
+		digitalWriteFast(lane2PreStageLight, HIGH);
+		digitalWriteFast(lane2StageLight, HIGH);
 		digitalWriteFast(lane1PreStageLight, LOW);
 		digitalWriteFast(lane1StageLight, LOW);
 		digitalWriteFast(lane1Count3Light, LOW);
@@ -710,38 +720,41 @@ void CountDownWatchForFinish() {
 		valLane2Cleared = LOW;
 		valStartInitiated = LOW;
 		Serial.print("_Lane2Won: "); PRINTSTATS
-			// DEBUG print // Serial.println("Race result: Lane 2 Won.");
-			// DEBUG print // Serial.print("raceStartTime: ");
-			// DEBUG print // Serial.println(raceStartTime);
-			// DEBUG print // Serial.print("lane2TrapTime: ");
-			// DEBUG print // Serial.println(lane2TrapTime);
-			// DEBUG print // Serial.print("lane2FinishTime: ");
-			// DEBUG print // Serial.println(lane2FinishTime);
-			Serial.print("\tLane 2 Elapsed Time G: ");
+		// DEBUG print // Serial.println("Race result: Lane 2 Won.");
+		// DEBUG print // Serial.print("raceStartTime: ");
+		// DEBUG print // Serial.println(raceStartTime);
+		// DEBUG print // Serial.print("lane2TrapTime: ");
+		// DEBUG print // Serial.println(lane2TrapTime);
+		// DEBUG print // Serial.print("lane2FinishTime: ");
+		// DEBUG print // Serial.println(lane2FinishTime);
+		Serial.print("\tLane 2 Elapsed Time G: ");
 		elapsedTime = (lane2FinishTime - raceStartTime);
 		Serial.println(elapsedTime / 1000.0);
 		Serial.print("\tLane 2 Trap Time H: ");
 		trapTime = (lane2FinishTime - lane2TrapTime);
 		Serial.println(trapTime / 1000.0);
 	}
-	else if (!valLane1Finished && valLane2Finished && valLane1Faulted && !valLane2Faulted && raceStarted)
+	else if (valLane2Finished && valLane1Faulted && !valLane2Faulted && raceStarted)
 	{
 		lane2FinishTime = millis();
 		Serial2.println(lane2FinishTime - raceStartTime);
 		state = LANE2WON;
+		digitalWriteFast(lane2WINdicator, HIGH);
+		timeToStopPowerToLane2WINdicator = lane2FinishTime + 750;
+		digitalWriteFast(lane2PreStageLight, HIGH);
+		digitalWriteFast(lane2StageLight, HIGH);
 		digitalWriteFast(lane1PreStageLight, LOW);
 		digitalWriteFast(lane1StageLight, LOW);
 		digitalWriteFast(lane1Count3Light, LOW);
 		digitalWriteFast(lane1Count2Light, LOW);
 		digitalWriteFast(lane1Count1Light, LOW);
 		digitalWriteFast(lane1StartGreenLight, LOW);
-		digitalWriteFast(lane1FalseStartRedLight, LOW);
 		lastTimeStaged = millis();
 		valLane1Cleared = LOW;
 		valLane2Cleared = LOW;
 		valStartInitiated = LOW;
 		Serial.print("_Lane2WonLane1Faulted: "); PRINTSTATS
-			Serial.println("\tRace result: Lane 2 Won because Lane 1 jumped the start.");
+		Serial.println("\tRace result: Lane 2 Won because Lane 1 jumped the start.");
 		Serial.print("\traceStartTime I: ");
 		Serial.println(raceStartTime);
 		Serial.print("\tlane2FinishTime J: ");
@@ -754,18 +767,21 @@ void CountDownWatchForFinish() {
 		trapTime = (lane2FinishTime - lane2TrapTime);
 		Serial.println(trapTime / 1000.0);
 	}
-	else if (valLane1Finished && !valLane2Finished && !valLane1Faulted && valLane2Faulted && raceStarted)
+	else if (valLane1Finished && !valLane1Faulted && valLane2Faulted && raceStarted)
 	{
 		lane1FinishTime = millis();
 		Serial1.println(lane1FinishTime - raceStartTime);
 		state = LANE1WON;
+		digitalWriteFast(lane1WINdicator, HIGH);
+		timeToStopPowerToLane1WINdicator = lane1FinishTime + 750;
+		digitalWriteFast(lane1PreStageLight, HIGH);
+		digitalWriteFast(lane1StageLight, HIGH);
 		digitalWriteFast(lane2PreStageLight, LOW);
 		digitalWriteFast(lane2StageLight, LOW);
 		digitalWriteFast(lane2Count3Light, LOW);
 		digitalWriteFast(lane2Count2Light, LOW);
 		digitalWriteFast(lane2Count1Light, LOW);
 		digitalWriteFast(lane2StartGreenLight, LOW);
-		digitalWriteFast(lane2FalseStartRedLight, LOW);
 		lastTimeStaged = millis();
 		valLane1Cleared = LOW;
 		valLane2Cleared = LOW;
@@ -791,6 +807,10 @@ void CountDownWatchForFinish() {
 		Serial2.println(lane2FinishTime - raceStartTime);
 		state = TIED;
 		lastTimeStaged = millis();
+		digitalWriteFast(lane1PreStageLight, HIGH);
+		digitalWriteFast(lane1StageLight, HIGH);
+		digitalWriteFast(lane2PreStageLight, HIGH);
+		digitalWriteFast(lane2StageLight, HIGH);
 		valLane1Cleared = LOW;
 		valLane2Cleared = LOW;
 		valStartInitiated = LOW;
@@ -830,6 +850,7 @@ void WatchForStaging() {
 	valLane2Staged = !digitalReadFast(lane2StagingEye);     // read the input pin
 	valLane1Finished = !digitalReadFast(lane1FinishLineEye); // read the input pin
 	valLane2Finished = !digitalReadFast(lane2FinishLineEye);  // read the input pin
+	valPressedStartButton = !digitalReadFast(startButton);  // read the input pin
 
 	if (valLane1Finished)
 	{
@@ -873,14 +894,14 @@ void WatchForStaging() {
 		}
 	}
 
-	if (fullResultsNotYetPrinted && valLane1HasFinished && valLane2HasFinished)
+	if (fullResultsNotYetPrinted && (valPressedStartButton || (valLane1HasFinished && valLane2HasFinished)))
 	{
 		if (LANE2WON == state)
-		        Serial1.println(lane1FinishTime - raceStartTime);
+			Serial1.println(lane1FinishTime - raceStartTime);
 		if (LANE1WON == state)
-		        Serial2.println(lane2FinishTime - raceStartTime);
+			Serial2.println(lane2FinishTime - raceStartTime);
 		Serial.print("_BothFinished: "); PRINTSTATS
-		Serial.println("\tBoth Racers finished.  Overall race numbers follow:");
+			Serial.println("\tBoth Racers finished.  Overall race numbers follow:");
 		Serial.print("\traceStartTime X: ");
 		Serial.println(raceStartTime);
 		Serial.print("\tlane1StartTime Y: ");
@@ -915,13 +936,17 @@ void WatchForStaging() {
 		Serial.print("\tLane 2 Trap Time J2: ");
 		trapTime = (lane2FinishTime - lane2TrapTime);
 		Serial.println(trapTime / 1000.0);
-		fullResultsNotYetPrinted = LOW;
 
 		Serial.println("");
 		Serial.print("\tfinished printing full results leaving in state: ");
 		Serial.println(state);
 
 		Serial.println("");
+	}
+
+	if (fullResultsNotYetPrinted && valLane1HasFinished && valLane2HasFinished)
+	{
+		fullResultsNotYetPrinted = LOW;
 	}
 
 	if (valLane1Cleared && valLane2Cleared && valLane1Staged && valLane2Staged)
@@ -993,9 +1018,7 @@ void loop() {
 	case TIED:
 		WatchForStaging();
 		break;
-		// TODO Add code to collect speed trap data
-		// TODO Add code to detect winner and flash lights for winning lane
-		// TODO Keep foul light on when other racer finishes and then trip windicator once racer has passed
+		// TODO Add code to flash lights for winning lane
 	default:
 		Serial.print("\tUnknown State: ");
 		Serial.println(state);
