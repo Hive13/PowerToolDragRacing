@@ -53,7 +53,7 @@ WaveHC wave;      // This is the only wave (audio) object, since we will only pl
 #define lane1Count1Light         30  // Arduino digital output on pin 30 = Lane 1 count 1 yellow light
 #define lane1StartGreenLight     32  // Arduino digital output on pin 32 = Lane 1 start  green light
 #define lane1FalseStartRedLight  34  // Arduino digital output on pin 34 = Lane 1 false-start red light
-#define lane1WINdicator		     36  // Arduino digital output on pin 36 = Lane 1 WINdicatiion
+#define lane1WINdicator	         36  // Arduino digital output on pin 36 = Lane 1 WINdicatiion
 
 #define lane2PreStageLight       23  // Arduino digital output on pin 23 = Lane 2 pre-stage yellow light pair
 #define lane2StageLight          25  // Arduino digital output on pin 25 = Lane 2 stage yellow light pair
@@ -65,7 +65,7 @@ WaveHC wave;      // This is the only wave (audio) object, since we will only pl
 #define lane2WINdicator          37  // Arduino digital output on pin 37 = Lane 2 WINdicatiion
 
 #define startButton              45  // Arduino digital input on pin 45 = Race Controller's start countdown button
-
+#define resetStateButton         47  // Arduino digital input on pin 47 = Race Controller's reset everything button
 
 int state = RESET;        // master variable for the state machine
 boolean lane1StageState = LOW;
@@ -126,6 +126,7 @@ boolean valLane1Cleared = LOW;
 boolean valLane2Cleared = LOW;
 
 boolean valPressedStartButton;
+boolean valPressedResetStateButton;
 
 boolean valStartInitiated = LOW;
 
@@ -248,7 +249,9 @@ void setup() {
 	pinMode(		 lane2FinishLineEye, INPUT);   // set pin to input
 	digitalWriteFast(lane2FinishLineEye, HIGH);    // turn on pullup resistors
 
-	pinMode(startButton, INPUT_PULLUP);   // set pin to input
+	pinMode(startButton,      INPUT_PULLUP);   // set pin to input
+	pinMode(resetStateButton, INPUT_PULLUP);   // set pin to input
+
 	LightsOut();
 
 	// set up serial port
@@ -369,15 +372,15 @@ void Staging() {
 			digitalWriteFast(lane2PreStageLight, lane2StageState);
 	}
 
-	valLane1Staged = !digitalReadFast(lane1StagingEye);       // read the input pin
-	valLane2Staged = !digitalReadFast(lane2StagingEye);       // read the input pin
-	valLane1Started = !digitalReadFast(lane1StartingEye);     // read the input pin
-	valLane2Started = !digitalReadFast(lane2StartingEye);     // read the input pin
-	valLane1Trapped = !digitalReadFast(lane1SpeedTrapEye);   // read the input pin
-	valLane2Trapped = !digitalReadFast(lane2SpeedTrapEye);    // read the input pin
-	valLane1Finished = !digitalReadFast(lane1FinishLineEye); // read the input pin
-	valLane2Finished = !digitalReadFast(lane2FinishLineEye);  // read the input pin
-	valPressedStartButton = !digitalReadFast(startButton);    // read the input pin
+	valLane1Staged =        !digitalReadFast(lane1StagingEye);    // read the input pin
+	valLane2Staged =        !digitalReadFast(lane2StagingEye);    // read the input pin
+	valLane1Started =       !digitalReadFast(lane1StartingEye);   // read the input pin
+	valLane2Started =       !digitalReadFast(lane2StartingEye);   // read the input pin
+	valLane1Trapped =       !digitalReadFast(lane1SpeedTrapEye);  // read the input pin
+	valLane2Trapped =       !digitalReadFast(lane2SpeedTrapEye);  // read the input pin
+	valLane1Finished =      !digitalReadFast(lane1FinishLineEye); // read the input pin
+	valLane2Finished =      !digitalReadFast(lane2FinishLineEye); // read the input pin
+	valPressedStartButton = !digitalReadFast(startButton);        // read the input pin
 
 	if (valLane1Finished) valLane1HasFinished = HIGH;
 	if (valLane2Finished) valLane2HasFinished = HIGH;
@@ -441,10 +444,6 @@ void BothStaged() {
 	valLane2Staged = !digitalReadFast(lane2StagingEye);     // read the input pin
 	valLane1Started = !digitalReadFast(lane1StartingEye);   // read the input pin
 	valLane2Started = !digitalReadFast(lane2StartingEye);   // read the input pin
-	//valLane1Trapped = !digitalReadFast(lane1SpeedTrapEye);    // read the input pin
-	//valLane2Trapped = !digitalReadFast(lane2SpeedTrapEye);    // read the input pin
-	//valLane1Finished = !digitalReadFast(lane1FinishLineEye);  // read the input pin
-	//valLane2Finished = !digitalReadFast(lane2FinishLineEye);  // read the input pin
 
 	if (!valLane1Staged && BOTHSTAGED == state) state = LANE2STAGED;
 	if (!valLane2Staged && BOTHSTAGED == state) state = LANE1STAGED;
@@ -478,14 +477,15 @@ void BothStaged() {
 }
 
 void CountDownWatchForFinish() {
-	valLane2Fault = !digitalReadFast(lane2StartingEye);   // read the input pin
-	valLane1Started = !digitalReadFast(lane1StartingEye);     // read the input pin
-	valLane2Started = !digitalReadFast(lane2StartingEye);     // read the input pin
-	valLane1Trapped = !digitalReadFast(lane1SpeedTrapEye);   // read the input pin
-	valLane2Trapped = !digitalReadFast(lane2SpeedTrapEye);    // read the input pin
-	valLane1Finished = !digitalReadFast(lane1FinishLineEye); // read the input pin
-	valLane2Finished = !digitalReadFast(lane2FinishLineEye);  // read the input pin
-	valPressedStartButton = !digitalReadFast(startButton);    // read the input pin
+	valLane2Fault =              !digitalReadFast(lane2StartingEye);   // read the input pin
+	valLane1Started =            !digitalReadFast(lane1StartingEye);   // read the input pin
+	valLane2Started =            !digitalReadFast(lane2StartingEye);   // read the input pin
+	valLane1Trapped =            !digitalReadFast(lane1SpeedTrapEye);  // read the input pin
+	valLane2Trapped =            !digitalReadFast(lane2SpeedTrapEye);  // read the input pin
+	valLane1Finished =           !digitalReadFast(lane1FinishLineEye); // read the input pin
+	valLane2Finished =           !digitalReadFast(lane2FinishLineEye); // read the input pin
+	valPressedStartButton =      !digitalReadFast(startButton);        // read the input pin
+	valPressedResetStateButton = !digitalReadFast(resetStateButton);   // read the input pin
 
 	if (valLane1Trapped && (0 == lane1TrapTime))
 	{
@@ -579,10 +579,8 @@ void CountDownWatchForFinish() {
 		lane1FinishTime = 0;
 		lane2FinishTime = 0;
 
-		if (!valLane1Faulted)
-			digitalWriteFast(lane1StartGreenLight, HIGH);
-		if (!valLane2Faulted)
-			digitalWriteFast(lane2StartGreenLight, HIGH);
+		if (!valLane1Faulted) digitalWriteFast(lane1StartGreenLight, HIGH);
+		if (!valLane2Faulted) digitalWriteFast(lane2StartGreenLight, HIGH);
 		digitalWriteFast(lane1Count1Light, LOW);
 		digitalWriteFast(lane2Count1Light, LOW);
 		if (valLane1Faulted && valLane2Faulted)
@@ -836,6 +834,48 @@ void CountDownWatchForFinish() {
 		trapTime = (lane2FinishTime - lane2TrapTime);
 		Serial.println(trapTime / 1000.0);
 	}
+	else if (valPressedResetStateButton)
+	{
+		Serial1.println(lane1FinishTime - raceStartTime);
+		Serial2.println(lane2FinishTime - raceStartTime);
+		lastTimeStaged = millis();
+		LightsOut();
+		digitalWriteFast(lane1PreStageLight, HIGH);
+		digitalWriteFast(lane1StageLight, HIGH);
+		digitalWriteFast(lane2PreStageLight, HIGH);
+		digitalWriteFast(lane2StageLight, HIGH);
+		valLane1Cleared = LOW;
+		valLane2Cleared = LOW;
+		valStartInitiated = LOW;
+		Serial.print("_ResetStatePressed: "); PRINTSTATS
+		if (valLane1Finished)
+			state = LANE1WON;
+		else if (valLane2Finished)
+			state = LANE2WON;
+		else
+			state = BOTHSTAGED;
+
+		Serial.println("\tRace result: Race controller reset the race.");
+		Serial.print("\traceStartTime Q: ");
+		Serial.println(raceStartTime);
+		Serial.print("\tlane1FinishTime R: ");
+		Serial.println(lane1FinishTime);
+		Serial.print("\tlane2FinishTime S: ");
+		Serial.println(lane2FinishTime);
+		Serial.println("");
+		Serial.print("\tLane 1 Elapsed Time T: ");
+		elapsedTime = (lane1FinishTime - raceStartTime);
+		Serial.println(elapsedTime / 1000.0);
+		Serial.print("\tLane 1 Trap Time U: ");
+		trapTime = (lane1FinishTime - lane1TrapTime);
+		Serial.println(trapTime / 1000.0);
+		Serial.print("\tLane 2 Elapsed Time V: ");
+		elapsedTime = (lane2FinishTime - raceStartTime);
+		Serial.println(elapsedTime / 1000.0);
+		Serial.print("\tLane 2 Trap Time W: ");
+		trapTime = (lane2FinishTime - lane2TrapTime);
+		Serial.println(trapTime / 1000.0);
+	}
 
 	if (!(RUNNING == state)) {
 		Serial.print("\tLeaving CountDownWatchForFinish in state: ");
@@ -846,11 +886,12 @@ void CountDownWatchForFinish() {
 
 
 void WatchForStaging() {
-	valLane1Staged = !digitalReadFast(lane1StagingEye);     // read the input pin
-	valLane2Staged = !digitalReadFast(lane2StagingEye);     // read the input pin
-	valLane1Finished = !digitalReadFast(lane1FinishLineEye); // read the input pin
-	valLane2Finished = !digitalReadFast(lane2FinishLineEye);  // read the input pin
-	valPressedStartButton = !digitalReadFast(startButton);  // read the input pin
+	valLane1Staged =             !digitalReadFast(lane1StagingEye);    // read the input pin
+	valLane2Staged =             !digitalReadFast(lane2StagingEye);    // read the input pin
+	valLane1Finished =           !digitalReadFast(lane1FinishLineEye); // read the input pin
+	valLane2Finished =           !digitalReadFast(lane2FinishLineEye); // read the input pin
+	valPressedStartButton =      !digitalReadFast(startButton);        // read the input pin
+	valPressedResetStateButton = !digitalReadFast(resetStateButton);   // read the input pin
 
 	if (valLane1Finished)
 	{
@@ -894,8 +935,9 @@ void WatchForStaging() {
 		}
 	}
 
-	if (fullResultsNotYetPrinted && (valPressedStartButton || (valLane1HasFinished && valLane2HasFinished)))
+	if (fullResultsNotYetPrinted && (valPressedStartButton || valPressedResetStateButton || (valLane1HasFinished && valLane2HasFinished)))
 	{
+		fullResultsNotYetPrinted = LOW;
 		if (LANE2WON == state)
 			Serial1.println(lane1FinishTime - raceStartTime);
 		if (LANE1WON == state)
@@ -942,11 +984,6 @@ void WatchForStaging() {
 		Serial.println(state);
 
 		Serial.println("");
-	}
-
-	if (fullResultsNotYetPrinted && valLane1HasFinished && valLane2HasFinished)
-	{
-		fullResultsNotYetPrinted = LOW;
 	}
 
 	if (valLane1Cleared && valLane2Cleared && valLane1Staged && valLane2Staged)
