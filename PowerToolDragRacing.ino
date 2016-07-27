@@ -942,8 +942,13 @@ void WatchForStaging() {
 			Serial1.println(lane1FinishTime - raceStartTime);
 		if (LANE1WON == state)
 			Serial2.println(lane2FinishTime - raceStartTime);
-		Serial.print("_BothFinished: "); PRINTSTATS
+		if (valPressedResetStateButton)
+			Serial.print("_ResetButtonPressed: "); PRINTSTATS
+		else
+		{ 
+			Serial.print("_BothFinished: "); PRINTSTATS
 			Serial.println("\tBoth Racers finished.  Overall race numbers follow:");
+		}
 		Serial.print("\traceStartTime X: ");
 		Serial.println(raceStartTime);
 		Serial.print("\tlane1StartTime Y: ");
